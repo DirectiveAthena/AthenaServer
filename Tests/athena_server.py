@@ -5,10 +5,12 @@
 from __future__ import annotations
 
 # Custom Library
+from AthenaLib.models.version import Version
 
 # Custom Packages
 from AthenaServer.models.athena_server import AthenaServer
 from AthenaServer.models.athena_server_methods import AthenaServerMethod
+from AthenaServer.models.athena_server_command import AthenaServerCommand
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
@@ -24,6 +26,15 @@ class TestServer(AthenaServer):
     @AthenaServerMethod.Ping()
     def method_ping(self):
         print("pinged")
+
+    @AthenaServerMethod.Command(AthenaServerCommand(api_level=Version(0,0,0), name="alpha"))
+    def method_command_alpha(self):
+        print("ran command alpha")
+
+    @AthenaServerMethod.Command(AthenaServerCommand(api_level=Version(0,0,0), name="beta"))
+    def method_command_beta(self):
+        print("ran command beta")
+
 
 
 # ----------------------------------------------------------------------------------------------------------------------

@@ -13,7 +13,8 @@ import tracemalloc
 # Custom Packages
 from AthenaServer.models.athena_server_protocol import AthenaServerProtocol
 from AthenaServer.models.athena_server_data_handler import AthenaServerDataHandler
-from AthenaServer.models.athena_server_methods import _Method, MethodPing
+from AthenaServer.models.athena_server_methods import _Method, MethodPing, MethodCommand
+from AthenaServer.models.athena_server_command import AthenaServerCommand
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
@@ -33,6 +34,7 @@ class AthenaServer:
     loop:asyncio.AbstractEventLoop=field(default_factory=asyncio.new_event_loop)
     ping_callback:MethodPing = field(init=False, default=None, repr=False)
     protocol:AthenaServerProtocol = field(init=False, default=None)
+    commands:dict[AthenaServerCommand:MethodCommand] = field(init=False, default_factory=dict)
 
     # ------------------------------------------------------------------------------------------------------------------
     # - store all defined method -
@@ -46,12 +48,22 @@ class AthenaServer:
         for attr_str in directory:
             attr = getattr(self, attr_str)
             attr.owner = self # always set the owner to the server itself
+
             match attr:
                 case MethodPing() if self.ping_callback is None:
                     self.ping_callback = attr
 
                 case MethodPing() if self.ping_callback is not None: # only one ping command can exist
                     raise ValueError("No multiple Ping methods allowed")
+
+                case MethodCommand() if attr.structure is not None:
+                    if attr.structure in self.commands:
+                        raise ValueError(f"The following command structure was already found in the commands:\n{attr.structure}")
+                    self.commands[attr.structure] = attr
+
+                case MethodCommand() if attr.structure is None:
+                    raise ValueError(f"The following command has been defined without a valid structure:\n{attr}")
+
                 case _:
                     pass
 
@@ -71,7 +83,9 @@ class AthenaServer:
     async def create_server(self) -> asyncio.AbstractServer:
         return await self.loop.create_server(
             protocol_factory=self.protocol_type.factory(
-                data_handler=AthenaServerDataHandler(),
+                data_handler=AthenaServerDataHandler(
+                    commands=self.commands
+                ),
                 ping_callback=self.ping_callback
             ),
             host=self.host,
