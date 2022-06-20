@@ -3,9 +3,6 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-import unittest
-import tracemalloc
-import asyncio
 
 # Custom Library
 
@@ -15,10 +12,11 @@ from AthenaServer.models.athena_server import AthenaServer
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-class Test_AthenaServer(unittest.TestCase):
-    def test_general(self):
-        tracemalloc.start()
-        server = AthenaServer(
-            port=41768
-        )
-        server.start()
+def main():
+    server = AthenaServer(
+        port=41768
+    )
+    server.start()
+
+if __name__ == '__main__':
+    main()
