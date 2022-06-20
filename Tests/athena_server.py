@@ -8,14 +8,29 @@ from __future__ import annotations
 
 # Custom Packages
 from AthenaServer.models.athena_server import AthenaServer
+from AthenaServer.models.athena_server_methods import AthenaServerMethod
+
+# ----------------------------------------------------------------------------------------------------------------------
+# - Code -
+# ----------------------------------------------------------------------------------------------------------------------
+class TestServer(AthenaServer):
+    def __init__(self):
+        super(TestServer, self).__init__(
+            port=41768
+        )
+    # ------------------------------------------------------------------------------------------------------------------
+    # - Define methods down below -
+    # ------------------------------------------------------------------------------------------------------------------
+    @AthenaServerMethod.Ping()
+    def method_ping(self):
+        print("pinged")
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
 def main():
-    server = AthenaServer(
-        port=41768
-    )
+    server = TestServer()
     server.start()
 
 if __name__ == '__main__':

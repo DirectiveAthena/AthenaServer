@@ -11,23 +11,22 @@ from dataclasses import dataclass, field
 
 # Custom Packages
 from AthenaServer.models.athena_server_data_handler import AthenaServerDataHandler
+from AthenaServer.models.athena_server_methods import MethodPing
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
 @dataclass(eq=False, order=False, match_args=False, slots=True, kw_only=True)
 class AthenaServerProtocol(asyncio.Protocol):
-    data_handler_factory:Callable[[], AthenaServerDataHandler]=None
+    data_handler:AthenaServerDataHandler=None
+    ping_callback:MethodPing=None
 
     # non init
-    transport: asyncio.transports.Transport = field(init=False, default=None)
-    loop:asyncio.AbstractEventLoop=field(init=False)
-    data_handler:AthenaServerDataHandler=field(init=False)
-    kwargs:dict=field(init=False)
+    transport: asyncio.transports.Transport = field(init=False, repr=False)
+    loop:asyncio.AbstractEventLoop=field(init=False, repr=False)
 
     def __post_init__(self):
         self.loop = asyncio.new_event_loop()
-
     # ------------------------------------------------------------------------------------------------------------------
     # - factory, needed for asyncio.AbstractEventLoop.create_connection protocol_factory kwarg used in Launcher -
     # ------------------------------------------------------------------------------------------------------------------
@@ -40,7 +39,6 @@ class AthenaServerProtocol(asyncio.Protocol):
         def factory_wrapper():
             # noinspection PyArgumentList
             return cls(**kwargs)
-
         return factory_wrapper
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -50,17 +48,15 @@ class AthenaServerProtocol(asyncio.Protocol):
         """
         Gets run when a client connects to the server
         """
-        self.data_handler = self.data_handler_factory()
         self.transport = transport
+        self.ping_callback.callback()
 
     def data_received(self, data: bytearray) -> None:
         """
         Gets run when a client sends data to server
         """
+        self.data_handler.handle(data)
 
-        self.transport.write(
-            self.data_handler.handle(data)
-        )
 
     def connection_lost(self, exc: Exception | None) -> None:
         """
