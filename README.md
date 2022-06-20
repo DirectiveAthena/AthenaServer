@@ -1,5 +1,5 @@
 # - AthenaServer -
-[![pypi](https://img.shields.io/pypi/v/AthenaServer)](https://pypi.org/project/AthenaServer/) [![GitHub license](https://img.shields.io/github/license/DirectiveAthena/AthenaServer)](https://github.com/DirectiveAthena/VerSC-AthenaColor/blob/master/LICENSE) [![Discord](https://img.shields.io/discord/814599159926620160?color=maroon)](https://discord.gg/6JcDbhXkCH) [![Downloads](https://pepy.tech/badge/athenaserver)](https://pepy.tech/project/athenaserver)
+[![pypi](https://img.shields.io/pypi/v/AthenaServer)](https://pypi.org/project/AthenaServer/) [![GitHub license](https://img.shields.io/github/license/DirectiveAthena/AthenaServer)](https://github.com/DirectiveAthena/athenaserver/blob/master/LICENSE) [![Discord](https://img.shields.io/discord/814599159926620160?color=maroon)](https://discord.gg/6JcDbhXkCH) [![Downloads](https://pepy.tech/badge/athenaserver)](https://pepy.tech/project/athenaserver)
 
 --- 
 ## Package Details
