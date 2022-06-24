@@ -6,7 +6,7 @@ from __future__ import annotations
 
 # Custom Library
 from AthenaServer.models.athena_server import AthenaServer
-from AthenaServer.models.athena_server_page import AthenaServerPage
+from AthenaServer.models.athena_server_page_structure import AthenaServerStructure
 
 # Custom Packages
 

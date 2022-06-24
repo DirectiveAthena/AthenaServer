@@ -8,7 +8,7 @@ from dataclasses import dataclass
 # Custom Library
 
 # Custom Packages
-from AthenaServer.models.athena_server_page import AthenaServerPage
+from AthenaServer.models.athena_server_page_structure import AthenaServerStructure
 from AthenaServer.functions.data_handler_support import check_pages_args, trim_root_page_name
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ from AthenaServer.functions.data_handler_support import check_pages_args, trim_r
 # ----------------------------------------------------------------------------------------------------------------------
 @dataclass(slots=True, kw_only=True)
 class AthenaServerDataHandler:
-    pages:dict[tuple:AthenaServerPage]
+    pages: dict[tuple:AthenaServerStructure]
 
     # ------------------------------------------------------------------------------------------------------------------
     # - factory, needed for asyncio.AbstractEventLoop.create_connection protocol_factory kwarg used in Launcher -
