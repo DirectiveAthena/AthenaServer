@@ -15,6 +15,9 @@ from AthenaServer.models.athena_server_protocol import AthenaServerProtocol
 from AthenaServer.models.athena_server_data_handler import AthenaServerDataHandler
 from AthenaServer.models.athena_server_methods import _Method, MethodPing, MethodCommand
 from AthenaServer.models.athena_server_command import AthenaServerCommand
+from AthenaServer.models.outputs.output import Output
+from AthenaServer.models.outputs.output_console import OutputConsole
+from AthenaServer.models.outputs.output_client import OutputClient
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
@@ -25,6 +28,8 @@ class AthenaServer:
     port:int=None
 
     protocol_type:type[AthenaServerProtocol]=AthenaServerProtocol
+    output_types:list[type[Output]]=field(default_factory=lambda : [OutputClient])
+    output_console_enabled:bool=True
 
     ssl_enabled:bool=False
     ssl_context:ssl.SSLContext=None
@@ -40,12 +45,12 @@ class AthenaServer:
     # - store all defined method -
     # ------------------------------------------------------------------------------------------------------------------
     def __post_init__(self):
-        # define the directory first, to not catch attr like "ping_callback" which will be set to a _Method
-        directory = [
-            attr_str for attr_str in self.__dir__()
-            if isinstance(getattr(self, attr_str), _Method)
-        ]
-        for attr_str in directory:
+        for attr_str in (
+            # only get the attributes which defined methods
+            #   Else other stuff will be caught as well
+            attr_name for attr_name in self.__dir__()
+            if isinstance(getattr(self, attr_name), _Method)
+        ):
             attr = getattr(self, attr_str)
             attr.owner = self # always set the owner to the server itself
 
@@ -67,6 +72,11 @@ class AthenaServer:
                 case _:
                     pass
 
+        if OutputClient not in self.output_types:
+            self.output_types.insert(0, OutputClient)
+
+        if self.output_console_enabled and OutputConsole not in self.output_types:
+            self.output_types.append(OutputConsole)
 
     # ------------------------------------------------------------------------------------------------------------------
     # - Server starting and such -
@@ -86,7 +96,8 @@ class AthenaServer:
                 data_handler=AthenaServerDataHandler(
                     commands=self.commands
                 ),
-                ping_callback=self.ping_callback
+                ping_callback=self.ping_callback,
+                output_types=self.output_types
             ),
             host=self.host,
             port=self.port,

@@ -3,16 +3,21 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from dataclasses import dataclass, field
+import asyncio
 
 # Custom Library
-from AthenaLib.models.version import Version
 
 # Custom Packages
+from AthenaServer.models.outputs.output import Output
+
+from AthenaServer.data.output_texts import JSON_NOT_FOUND, WRONG_FORMAT
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-@dataclass(slots=True, kw_only=True, match_args=True, unsafe_hash=True)
-class AthenaServerCommand:
-    name:str
+class OutputConsole(Output):
+    def json_not_found(self):
+        print(JSON_NOT_FOUND)
+
+    def wrong_format(self):
+        print(WRONG_FORMAT)

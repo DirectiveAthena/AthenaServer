@@ -3,16 +3,14 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from dataclasses import dataclass, field
+import json
 
 # Custom Library
-from AthenaLib.models.version import Version
 
 # Custom Packages
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-@dataclass(slots=True, kw_only=True, match_args=True, unsafe_hash=True)
-class AthenaServerCommand:
-    name:str
+JSON_NOT_FOUND:bytes = json.dumps({"error": "No valid json structure found"}).encode("utf_8")
+WRONG_FORMAT:bytes = json.dumps({"error": "Format of the json structure could not be mapped to a valid format"}).encode("utf_8")

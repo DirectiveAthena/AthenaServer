@@ -27,11 +27,11 @@ class TestServer(AthenaServer):
     def method_ping(self):
         print("pinged")
 
-    @AthenaServerMethod.Command(AthenaServerCommand(api_level=Version(0,0,0), name="alpha"))
+    @AthenaServerMethod.Command(AthenaServerCommand(name="alpha"))
     def method_command_alpha(self):
         print("ran command alpha")
 
-    @AthenaServerMethod.Command(AthenaServerCommand(api_level=Version(0,0,0), name="beta"))
+    @AthenaServerMethod.Command(AthenaServerCommand(name="beta"))
     def method_command_beta(self):
         print("ran command beta")
 

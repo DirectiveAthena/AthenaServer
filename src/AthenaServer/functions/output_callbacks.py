@@ -3,16 +3,17 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from dataclasses import dataclass, field
 
 # Custom Library
-from AthenaLib.models.version import Version
 
 # Custom Packages
+from AthenaServer.models.outputs.output import Output
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-@dataclass(slots=True, kw_only=True, match_args=True, unsafe_hash=True)
-class AthenaServerCommand:
-    name:str
+def json_not_found(output:Output):
+    output.json_not_found()
+
+def wrong_format(output:Output):
+    output.wrong_format()

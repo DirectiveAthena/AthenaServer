@@ -3,16 +3,18 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from dataclasses import dataclass, field
+import json
 
 # Custom Library
-from AthenaLib.models.version import Version
 
 # Custom Packages
+import AthenaServer.models.exceptions as exceptions
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-@dataclass(slots=True, kw_only=True, match_args=True, unsafe_hash=True)
-class AthenaServerCommand:
-    name:str
+def json_as_bytes_to_dict(data: bytearray) -> dict:
+    try:
+        return json.loads(data)
+    except json.JSONDecodeError:
+        raise exceptions.JsonNotFound

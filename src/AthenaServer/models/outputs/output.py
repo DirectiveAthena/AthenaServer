@@ -3,16 +3,23 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
 
 # Custom Library
-from AthenaLib.models.version import Version
 
 # Custom Packages
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-@dataclass(slots=True, kw_only=True, match_args=True, unsafe_hash=True)
-class AthenaServerCommand:
-    name:str
+class Output(ABC):
+    def __init__(self, **kwargs):
+        pass
+
+    @abstractmethod
+    def json_not_found(self):
+        pass
+
+    @abstractmethod
+    def wrong_format(self):
+        pass
