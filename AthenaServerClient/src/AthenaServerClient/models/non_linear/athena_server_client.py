@@ -9,16 +9,14 @@ import asyncio
 # Custom Library
 
 # Custom Packages
+from AthenaServerClient.models.athena_server_client import AthenaServerClient
 from AthenaServerClient.models.non_linear.athena_server_client_protocol import AthenaServerClientProtocol
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
 @dataclass(slots=True, kw_only=True)
-class AthenaServerClient_NonLinear:
-    host:str
-    port:int
-
+class AthenaServerClient_NonLinear(AthenaServerClient):
     #non init
     loop:asyncio.AbstractEventLoop=field(init=False)
 

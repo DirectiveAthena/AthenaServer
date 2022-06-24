@@ -3,24 +3,26 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from dataclasses import dataclass
-import asyncio
+from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
+from typing import Callable
 
 # Custom Library
 
 # Custom Packages
-from AthenaServerClient.models.athena_server_client import AthenaServerClient
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
 @dataclass(slots=True, kw_only=True)
-class AthenaServerClient_Linear(AthenaServerClient):
-    async def connect(self) -> tuple[asyncio.StreamReader, asyncio.StreamWriter]:
-        return await asyncio.open_connection(
-            host=self.host,
-            port=self.port,
-        )
+class AthenaServerClient(ABC):
+    host:str
+    port:int
 
-    def close(self):
-        pass
+    # ------------------------------------------------------------------------------------------------------------------
+    # - ABC methods -
+    # ------------------------------------------------------------------------------------------------------------------
+    @abstractmethod
+    async def connect(self):...
+    @abstractmethod
+    async def close(self): ...
