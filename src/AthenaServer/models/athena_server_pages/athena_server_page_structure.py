@@ -27,3 +27,6 @@ class AthenaServerStructure(AthenaServerPageLogic):
     def __exit__(self, exc_type, exc_val, exc_tb):
         super(AthenaServerStructure, self).__exit__(exc_type, exc_val, exc_tb)
         self.structure[(self.root_page.name,)] = self.root_page # add the root page to itself
+
+    def __getitem__(self, item:tuple):
+        return self.structure[item]

@@ -24,6 +24,9 @@ class AthenaServerPage(AthenaServerPageLogic):
     def PUT(self, **kwargs):
         pass
 
+    def PATCH(self, **kwargs):
+        pass
+
     def POST(self, **kwargs):
         pass
 

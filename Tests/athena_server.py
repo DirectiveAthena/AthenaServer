@@ -6,7 +6,7 @@ from __future__ import annotations
 
 # Custom Library
 from AthenaServer.models.athena_server import AthenaServer
-from AthenaServer.models.athena_server_page_structure import AthenaServerStructure
+from Tests.support import constructor_0
 
 # Custom Packages
 
@@ -17,7 +17,7 @@ def create_test_server() -> AthenaServer:
     server = AthenaServer(
         host="localhost",
         port=41768,
-        pages=...
+        pages_structure=constructor_0()
     )
     return server
 

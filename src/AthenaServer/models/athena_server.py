@@ -13,7 +13,7 @@ import tracemalloc
 # Custom Packages
 from AthenaServer.models.athena_server_protocol import AthenaServerProtocol
 from AthenaServer.models.athena_server_data_handler import AthenaServerDataHandler
-from AthenaServer.models.athena_server_page_structure import AthenaServerStructure
+from AthenaServer.models.athena_server_pages import AthenaServerStructure
 from AthenaServer.models.outputs.output import Output
 from AthenaServer.models.outputs.output_console import OutputConsole
 from AthenaServer.models.outputs.output_client import OutputClient
@@ -32,7 +32,7 @@ class AthenaServer:
     ssl_enabled:bool=False
     ssl_context:ssl.SSLContext=None
 
-    pages: dict[str:AthenaServerStructure]=field(default_factory=dict)
+    pages_structure: AthenaServerStructure=field(default_factory=dict)
 
     # non init
     server:asyncio.AbstractServer = field(init=False, default=None, repr=False)
@@ -65,7 +65,7 @@ class AthenaServer:
         return await self.loop.create_server(
             protocol_factory=AthenaServerProtocol.factory(
                 data_handler=AthenaServerDataHandler(
-                    pages=self.pages,
+                    pages_structure=self.pages_structure,
                 ),
                 output_types=self.output_types
             ),
