@@ -4,6 +4,7 @@
 # General Packages
 from __future__ import annotations
 import asyncio
+import json
 from typing import Callable
 from dataclasses import dataclass, field
 
@@ -12,6 +13,9 @@ from dataclasses import dataclass, field
 # Custom Packages
 from AthenaServer.models.athena_server_data_handler import AthenaServerDataHandler
 from AthenaServer.models.outputs.output import Output
+from AthenaServer.models.athena_server_response import AthenaServerResponse
+
+import AthenaServer.data.return_codes as return_codes
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
@@ -73,5 +77,16 @@ class AthenaServerProtocol(asyncio.Protocol):
     # ------------------------------------------------------------------------------------------------------------------
     # - Outputs -
     # ------------------------------------------------------------------------------------------------------------------
-    def output_handler(self,output:dict):
-        pass
+    def output_handler(self,response:AthenaServerResponse):
+        print(response)
+        try:
+            self.transport.write(
+                json.dumps(response.to_dict()).encode("utf_8")
+            )
+        except json.JSONDecodeError:
+            self.transport.write(
+                json.dumps(AthenaServerResponse(
+                    code=return_codes.ErrorServer.InternalError,
+                    body={}
+                )).encode("utf_8")
+            )
