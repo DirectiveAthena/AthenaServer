@@ -21,7 +21,7 @@ class AthenaServerDataHandler:
     # ------------------------------------------------------------------------------------------------------------------
     # - factory, needed for asyncio.AbstractEventLoop.create_connection protocol_factory kwarg used in Launcher -
     # ------------------------------------------------------------------------------------------------------------------
-    def handle(self, data: bytearray) -> dict:
+    async def handle(self, data: bytearray) -> dict:
         match data.decode("utf_8").split(" ", 2):
             case "GET", str(pages), str(json_args):
                 try:
@@ -35,7 +35,7 @@ class AthenaServerDataHandler:
                     print("wrong format")
                     return {}
                 try:
-                    result = page.GET(**json_dict)
+                    result = await page.GET(**json_dict)
                     print(result)
                 except TypeError:
                     print("wrong arguments")

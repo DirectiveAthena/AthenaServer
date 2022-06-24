@@ -16,7 +16,7 @@ from AthenaServer.models.athena_server_pages import AthenaServerStructure, Athen
 class PageData(AthenaServerPage):
     name:str = "data"
 
-    def GET(self,*,test:str):
+    async def GET(self,*,test:str):
         return f"here is some data according to : {test} "
 
 def constructor_0() -> AthenaServerStructure:

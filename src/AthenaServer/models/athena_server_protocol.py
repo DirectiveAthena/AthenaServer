@@ -59,7 +59,10 @@ class AthenaServerProtocol(asyncio.Protocol):
         """
         Gets run when a client sends data to server
         """
-        self.output_handler(self.data_handler.handle(data))
+        asyncio.create_task(self.task_data_received(data))
+
+    async def task_data_received(self, data:bytearray):
+        self.output_handler(await self.data_handler.handle(data))
 
     def connection_lost(self, exc: Exception | None) -> None:
         """

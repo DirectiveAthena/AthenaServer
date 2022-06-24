@@ -18,22 +18,22 @@ class AthenaServerPage(AthenaServerPageLogic):
     # ------------------------------------------------------------------------------------------------------------------
     # - Restfull commands -
     # ------------------------------------------------------------------------------------------------------------------
-    def GET(self, **kwargs):
+    async def GET(self, **kwargs):
         """A method that retrieves information from the page's content"""
         pass
 
-    def POST(self, **kwargs):
+    async def POST(self, **kwargs):
         """A method that creates content on the page"""
         pass
 
-    def PUT(self, **kwargs):
+    async def PUT(self, **kwargs):
         """A method that creates or replaces content on the page"""
         pass
 
-    def PATCH(self, **kwargs):
+    async def PATCH(self, **kwargs):
         """A method that updates the content on the page"""
         pass
 
-    def DELETE(self, **kwargs):
+    async def DELETE(self, **kwargs):
         """A method that removes content on the page"""
         pass
