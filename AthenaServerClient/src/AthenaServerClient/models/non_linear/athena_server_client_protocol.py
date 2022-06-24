@@ -34,7 +34,8 @@ class AthenaServerClientProtocol(asyncio.Protocol):
         self.buffer = data
 
     def connection_lost(self, exc: Exception | None) -> None:
-        raise exc
+        if exc is not None:
+            raise exc
 
     async def read_buffer(self):
         # todo fix this ugly code

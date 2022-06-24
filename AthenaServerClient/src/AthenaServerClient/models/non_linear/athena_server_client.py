@@ -19,11 +19,12 @@ from AthenaServerClient.models.non_linear.athena_server_client_protocol import A
 class AthenaServerClient_NonLinear(AthenaServerClient):
     #non init
     loop:asyncio.AbstractEventLoop=field(init=False)
+    protocol:AthenaServerClientProtocol=field(init=False)
 
     async def connect(self) -> AthenaServerClientProtocol:
         self.loop = asyncio.get_running_loop()
-        _, protocol = await self.create_connection()
-        return protocol
+        _, self.protocol = await self.create_connection()
+        return self.protocol
 
     async def create_connection(self):
         return await self.loop.create_connection(
@@ -32,5 +33,5 @@ class AthenaServerClient_NonLinear(AthenaServerClient):
             port=self.port,
         )
 
-    def close(self):
-        self.loop.close()
+    async def close(self):
+        self.protocol.transport.close()

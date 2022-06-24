@@ -32,4 +32,6 @@ class Test_AthenaServerClient_NonLinear(unittest.TestCase):
                 await protocol.read_buffer()
             )
 
+            await client.close()
+
         asyncio.run(main())

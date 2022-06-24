@@ -33,4 +33,7 @@ class Test_AthenaServerClient_Linear(unittest.TestCase):
                 result
             )
 
+            await client.close()
+
+
         asyncio.run(main())
