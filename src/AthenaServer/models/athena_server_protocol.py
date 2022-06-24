@@ -11,11 +11,7 @@ from dataclasses import dataclass, field
 
 # Custom Packages
 from AthenaServer.models.athena_server_data_handler import AthenaServerDataHandler
-from AthenaServer.models.athena_server_methods import MethodPing
-import AthenaServer.models.exceptions as exceptions
 from AthenaServer.models.outputs.output import Output
-
-import AthenaServer.functions.output_callbacks as output_callbacks
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
@@ -24,7 +20,6 @@ import AthenaServer.functions.output_callbacks as output_callbacks
 class AthenaServerProtocol(asyncio.Protocol):
     output_types:list[type[Output]] = None
     data_handler:AthenaServerDataHandler=None
-    ping_callback:MethodPing=None
 
     # non init
     transport: asyncio.transports.Transport = field(init=False, repr=False)
@@ -54,25 +49,17 @@ class AthenaServerProtocol(asyncio.Protocol):
     def connection_made(self, transport: asyncio.transports.Transport) -> None:
         """
         Gets run when a client connects to the server
+        Stores the 'asyncio.transports.Transport' as a attr of the class
         """
         # noinspection PyArgumentList
         self.outputs = [o(transport=transport) for o in self.output_types]
-
         self.transport = transport
-        self.ping_callback.callback()
 
     def data_received(self, data: bytearray) -> None:
         """
         Gets run when a client sends data to server
         """
-        try:
-            self.data_handler.handle(data)
-
-        except exceptions.JsonNotFound:
-            self.output_handler(output_callbacks.json_not_found)
-        except exceptions.WrongFormat:
-            self.output_handler(output_callbacks.wrong_format)
-
+        self.output_handler(self.data_handler.handle(data))
 
     def connection_lost(self, exc: Exception | None) -> None:
         """
@@ -80,12 +67,8 @@ class AthenaServerProtocol(asyncio.Protocol):
         """
         print(exc)
 
-    def eof_received(self) -> bool | None:
-        pass
-
     # ------------------------------------------------------------------------------------------------------------------
     # - Outputs -
     # ------------------------------------------------------------------------------------------------------------------
-    def output_handler(self,callback:Callable):
-        for output in self.outputs:
-            callback(output)
+    def output_handler(self,output:dict):
+        pass

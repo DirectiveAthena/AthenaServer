@@ -3,36 +3,40 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from dataclasses import dataclass, field
-import json
+from dataclasses import dataclass
 
 # Custom Library
-from AthenaLib.models.version import Version
 
 # Custom Packages
-from AthenaServer.models.athena_server_methods import MethodCommand
-from AthenaServer.models.athena_server_command import AthenaServerCommand
-import AthenaServer.models.exceptions as exceptions
-
-from AthenaServer.functions.casting import json_as_bytes_to_dict
+from AthenaServer.models.athena_server_page import AthenaServerPage
+from AthenaServer.functions.data_handler_support import check_pages_args, trim_root_page_name
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
 @dataclass(slots=True, kw_only=True)
 class AthenaServerDataHandler:
-    commands:dict[AthenaServerCommand:AthenaServerCommand] = field(default_factory=dict)
+    pages:dict[tuple:AthenaServerPage]
+
     # ------------------------------------------------------------------------------------------------------------------
     # - factory, needed for asyncio.AbstractEventLoop.create_connection protocol_factory kwarg used in Launcher -
     # ------------------------------------------------------------------------------------------------------------------
-    def handle(self, data: bytearray):
-        try:
-            handled_command = AthenaServerCommand(**json_as_bytes_to_dict(data))
-        except TypeError:
-            raise exceptions.WrongFormat
+    def handle(self, data: bytearray) -> dict:
+        match data.decode("utf_8").split(" ", 2):
+            case "GET", str(pages), str(args):
+                print(data, "GET")
 
-        if handled_command not in self.commands:
-            return
+            case "PUT", str(pages), str(args):
+                print(data,"PUT")
 
-        self.commands[handled_command].callback()
+            case "POST", str(pages), str(args):
+                print(data,"POST")
+
+            case "DELETE", str(pages), str(args):
+                print(data,"DELETE")
+
+            case _:
+                print(data, "UNDEFINED")
+
+        return {}
 
