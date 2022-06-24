@@ -81,12 +81,13 @@ class AthenaServerProtocol(asyncio.Protocol):
         print(response)
         try:
             self.transport.write(
-                json.dumps(response.to_dict()).encode("utf_8")
+                f"""{json.dumps(response.to_dict())}\r\n""".encode("utf_8")
             )
         except json.JSONDecodeError:
+            json_str =  json.dumps(AthenaServerResponse(
+                code=return_codes.ErrorServer.InternalError,
+                body={}
+            ))
             self.transport.write(
-                json.dumps(AthenaServerResponse(
-                    code=return_codes.ErrorServer.InternalError,
-                    body={}
-                )).encode("utf_8")
+                f"""{json_str}\r\n""".encode("utf_8")
             )

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 # Custom Library
 from AthenaServer.models.athena_server import AthenaServer
-from Tests.support import constructor_0
+from Tests.Tests_AthenaServer.support import constructor_0
 
 # Custom Packages
 
