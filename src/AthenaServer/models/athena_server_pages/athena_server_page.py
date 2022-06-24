@@ -3,7 +3,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 # Custom Library
 
@@ -16,19 +16,24 @@ from AthenaServer.models.athena_server_pages.athena_server_page_logic import Ath
 @dataclass(match_args=True, slots=True)
 class AthenaServerPage(AthenaServerPageLogic):
     # ------------------------------------------------------------------------------------------------------------------
-    # Restfull commands
+    # - Restfull commands -
     # ------------------------------------------------------------------------------------------------------------------
     def GET(self, **kwargs):
-        pass
-
-    def PUT(self, **kwargs):
-        pass
-
-    def PATCH(self, **kwargs):
+        """A method that retrieves information from the page's content"""
         pass
 
     def POST(self, **kwargs):
+        """A method that creates content on the page"""
+        pass
+
+    def PUT(self, **kwargs):
+        """A method that creates or replaces content on the page"""
+        pass
+
+    def PATCH(self, **kwargs):
+        """A method that updates the content on the page"""
         pass
 
     def DELETE(self, **kwargs):
+        """A method that removes content on the page"""
         pass
