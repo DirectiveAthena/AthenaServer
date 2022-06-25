@@ -17,9 +17,7 @@ class Output(ABC):
         pass
 
     @abstractmethod
-    def json_not_found(self):
-        pass
+    def json_not_found(self):...
 
     @abstractmethod
-    def wrong_format(self):
-        pass
+    def wrong_format(self):...

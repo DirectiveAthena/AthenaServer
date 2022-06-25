@@ -3,22 +3,23 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from dataclasses import dataclass
+import asyncio
+
 # Custom Library
 
 # Custom Packages
-import AthenaServer.data.return_codes as  return_codes
+from AthenaServer.models.outputs.output_client import OutputClient
+
+from AthenaServer.data.output_texts import JSON_NOT_FOUND, WRONG_FORMAT
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-@dataclass(slots=True, match_args=True)
-class AthenaServerResponse:
-    code:return_codes.Information|return_codes.Success|return_codes.Redirection|return_codes.ErrorClient|return_codes.ErrorServer
-    body:dict
+class OutputClient_Server(OutputClient):
+    transport: asyncio.Transport
 
-    def to_dict(self):
-        return {
-            "code": self.code.value,
-            "body": self.body
-        }
+    def json_not_found(self):
+        self.transport.write(JSON_NOT_FOUND)
+
+    def wrong_format(self):
+        self.transport.write(WRONG_FORMAT)

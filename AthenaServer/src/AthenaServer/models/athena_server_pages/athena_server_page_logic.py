@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-@dataclass(match_args=True, slots=True)
+@dataclass(match_args=True, slots=True, eq=False, order=False)
 class AthenaServerPageLogic:
     name:str
     structure: dict[str:AthenaServerPageLogic]=field(default_factory=dict)

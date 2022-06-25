@@ -4,26 +4,26 @@
 # General Packages
 from __future__ import annotations
 import asyncio
-import json
 from typing import Callable
 from dataclasses import dataclass, field
+import json
 
 # Custom Library
 
 # Custom Packages
-from AthenaServer.models.athena_server_data_handler import AthenaServerDataHandler
+from AthenaServer.models.handlers.handler_data import HandlerData
 from AthenaServer.models.outputs.output import Output
-from AthenaServer.models.athena_server_response import AthenaServerResponse
+from AthenaServer.models.responses.response import Response
 
-import AthenaServer.data.return_codes as return_codes
+from AthenaServer.data.responses import INTERNAL_ERROR_ENCODED
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
 @dataclass(eq=False, order=False, match_args=False, slots=True, kw_only=True)
 class AthenaServerProtocol(asyncio.Protocol):
-    output_types:list[type[Output]] = None
-    data_handler:AthenaServerDataHandler=None
+    output_types:list[type[Output]]
+    handler_data:HandlerData
 
     # non init
     transport: asyncio.transports.Transport = field(init=False, repr=False)
@@ -55,9 +55,8 @@ class AthenaServerProtocol(asyncio.Protocol):
         Gets run when a client connects to the server
         Stores the 'asyncio.transports.Transport' as a attr of the class
         """
-        # noinspection PyArgumentList
-        self.outputs = [o(transport=transport) for o in self.output_types]
         self.transport = transport
+        self.outputs = [o(transport=transport) for o in self.output_types]
 
     def data_received(self, data: bytearray) -> None:
         """
@@ -66,7 +65,7 @@ class AthenaServerProtocol(asyncio.Protocol):
         asyncio.create_task(self.task_data_received(data))
 
     async def task_data_received(self, data:bytearray):
-        self.output_handler(await self.data_handler.handle(data))
+        self.output_handler(await self.handler_data.handle(data))
 
     def connection_lost(self, exc: Exception | None) -> None:
         """
@@ -77,17 +76,9 @@ class AthenaServerProtocol(asyncio.Protocol):
     # ------------------------------------------------------------------------------------------------------------------
     # - Outputs -
     # ------------------------------------------------------------------------------------------------------------------
-    def output_handler(self,response:AthenaServerResponse):
-        print(response)
+    def output_handler(self,response:Response):
         try:
-            self.transport.write(
-                f"""{json.dumps(response.to_dict())}\r\n""".encode("utf_8")
-            )
-        except json.JSONDecodeError:
-            json_str =  json.dumps(AthenaServerResponse(
-                code=return_codes.ErrorServer.InternalError,
-                body={}
-            ))
-            self.transport.write(
-                f"""{json_str}\r\n""".encode("utf_8")
-            )
+            self.transport.write(response.encode())
+        except json.JSONDecodeError or UnicodeEncodeError:
+            self.transport.write(INTERNAL_ERROR_ENCODED)
+

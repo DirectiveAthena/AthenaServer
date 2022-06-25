@@ -12,21 +12,22 @@ import tracemalloc
 
 # Custom Packages
 from AthenaServer.models.athena_server_protocol import AthenaServerProtocol
-from AthenaServer.models.athena_server_data_handler import AthenaServerDataHandler
+from AthenaServer.models.handlers.handler_data import HandlerData
+from AthenaServer.models.handlers.handler_data_server import HandlerData_AthenaServer
 from AthenaServer.models.athena_server_pages import AthenaServerStructure
 from AthenaServer.models.outputs.output import Output
 from AthenaServer.models.outputs.output_console import OutputConsole
-from AthenaServer.models.outputs.output_client import OutputClient
+from AthenaServer.models.outputs.output_client_server import OutputClient_Server
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
 @dataclass(eq=False, order=False, match_args=False, slots=True)
 class AthenaServer:
-    host:str|list[str]
+    host:str
     port:int
 
-    output_types:list[type[Output]]=field(default_factory=lambda : [OutputClient])
+    output_types:list[type[Output]]=field(default_factory=lambda : [OutputClient_Server])
     output_console_enabled:bool=True
 
     ssl_enabled:bool=False
@@ -43,8 +44,8 @@ class AthenaServer:
     # - store all defined method -
     # ------------------------------------------------------------------------------------------------------------------
     def __post_init__(self):
-        if OutputClient not in self.output_types:
-            self.output_types.insert(0, OutputClient)
+        if OutputClient_Server not in self.output_types:
+            self.output_types.insert(0, OutputClient_Server)
 
         if self.output_console_enabled and OutputConsole not in self.output_types:
             self.output_types.append(OutputConsole)
@@ -64,12 +65,16 @@ class AthenaServer:
     async def create_server(self) -> asyncio.AbstractServer:
         return await self.loop.create_server(
             protocol_factory=AthenaServerProtocol.factory(
-                data_handler=AthenaServerDataHandler(
-                    pages_structure=self.pages_structure,
-                ),
+                handler_data=self.data_handler(),
                 output_types=self.output_types
             ),
             host=self.host,
             port=self.port,
             ssl=self.ssl_context if self.ssl_enabled else None,
+        )
+
+    def data_handler(self) -> HandlerData:
+        """Constructor for the correct data handler for the server in question"""
+        return HandlerData_AthenaServer(
+            pages_structure=self.pages_structure,
         )

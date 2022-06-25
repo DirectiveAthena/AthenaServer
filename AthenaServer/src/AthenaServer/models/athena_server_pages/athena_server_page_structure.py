@@ -14,9 +14,9 @@ from AthenaServer.models.athena_server_pages.athena_server_page import AthenaSer
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-@dataclass(match_args=True, slots=True)
+@dataclass(match_args=True, slots=True, eq=False, order=False)
 class AthenaServerStructure(AthenaServerPageLogic):
-    root_page:AthenaServerPage=None
+    root_page:AthenaServerPage=field(init=False)
 
     # ------------------------------------------------------------------------------------------------------------------
     # - init -
@@ -24,11 +24,7 @@ class AthenaServerStructure(AthenaServerPageLogic):
     def __post_init__(self):
         # the root_page is necessary because the structure needs a root to flatten from
         #   Else the pages defined with the manager will not be able to be flattened correctly
-        if self.root_page is None:
-            self.root_page = AthenaServerPage(name=self.name)
-        # always check that the pages are inherited correctly
-        elif not isinstance(self.root_page, AthenaServerPage):
-            raise TypeError
+        self.root_page = AthenaServerPage(name=self.name)
 
     # ------------------------------------------------------------------------------------------------------------------
     # - Context Manager -
