@@ -3,23 +3,26 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-import asyncio
+import json
 
 # Custom Library
 
 # Custom Packages
 from AthenaServer.models.outputs.output_client import OutputClient
+from AthenaServer.models.responses.response import Response
 
-from AthenaServer.data.output_texts import JSON_NOT_FOUND, WRONG_FORMAT
+from AthenaServer.data.responses import INTERNAL_ERROR_ENCODED
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
 class OutputClient_Server(OutputClient):
-    transport: asyncio.Transport
 
-    def json_not_found(self):
-        self.transport.write(JSON_NOT_FOUND)
+    async def send(self, response:Response):
+        try:
+            self.transport.write(response.encode())
+        except json.JSONDecodeError or UnicodeEncodeError:
+            self.transport.write(INTERNAL_ERROR_ENCODED)
 
-    def wrong_format(self):
-        self.transport.write(WRONG_FORMAT)
+    async def on_receive(self, data: bytearray):
+        pass

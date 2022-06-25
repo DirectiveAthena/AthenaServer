@@ -3,21 +3,20 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-import asyncio
 
 # Custom Library
 
 # Custom Packages
 from AthenaServer.models.outputs.output import Output
+from AthenaServer.models.responses.response import Response
 
-from AthenaServer.data.output_texts import JSON_NOT_FOUND, WRONG_FORMAT
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
 class OutputConsole(Output):
-    def json_not_found(self):
-        print(JSON_NOT_FOUND)
+    async def send(self, response:Response):
+        print(response)
 
-    def wrong_format(self):
-        print(WRONG_FORMAT)
+    async def on_receive(self, data: bytearray):
+        print(data)

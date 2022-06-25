@@ -58,11 +58,10 @@ class AthenaServer:
         self.server = self.loop.run_until_complete(
             self.create_server()
         )
-
         self.loop.run_forever()
         self.loop.close()
 
-    async def create_server(self) -> asyncio.AbstractServer:
+    async def create_server(self) -> asyncio.base_events.Server:
         return await self.loop.create_server(
             protocol_factory=AthenaServerProtocol.factory(
                 handler_data=self.data_handler(),

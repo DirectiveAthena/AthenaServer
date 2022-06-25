@@ -6,7 +6,6 @@ from __future__ import annotations
 import asyncio
 from typing import Callable
 from dataclasses import dataclass, field
-import json
 
 # Custom Library
 
@@ -14,8 +13,6 @@ import json
 from AthenaServer.models.handlers.handler_data import HandlerData
 from AthenaServer.models.outputs.output import Output
 from AthenaServer.models.responses.response import Response
-
-from AthenaServer.data.responses import INTERNAL_ERROR_ENCODED
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
@@ -65,20 +62,18 @@ class AthenaServerProtocol(asyncio.Protocol):
         asyncio.create_task(self.task_data_received(data))
 
     async def task_data_received(self, data:bytearray):
-        self.output_handler(await self.handler_data.handle(data))
+        for output in self.outputs:
+            await output.on_receive(data)
+
+        # only generate one response, and output it accordingly
+        response: Response = await self.handler_data.handle(data)
+
+        for output in self.outputs:
+            await output.send(response)
 
     def connection_lost(self, exc: Exception | None) -> None:
         """
         Gets run when a client looses connection to the server
         """
-        print(exc)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    # - Outputs -
-    # ------------------------------------------------------------------------------------------------------------------
-    def output_handler(self,response:Response):
-        try:
-            self.transport.write(response.encode())
-        except json.JSONDecodeError or UnicodeEncodeError:
-            self.transport.write(INTERNAL_ERROR_ENCODED)
-
+        if exc is not None:
+            print(exc)
