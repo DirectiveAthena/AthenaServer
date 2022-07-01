@@ -13,7 +13,6 @@ from AthenaServer.models.handlers.handler_data import HandlerData
 from AthenaServer.models.athena_server_pages import AthenaServerStructure
 from AthenaServer.models.responses.response_server import Response_AthenaServer
 
-import AthenaServer.data.return_codes as return_codes
 from AthenaServer.data.responses import NOT_FOUND, BAD_REQUEST, NOT_ACCEPTABLE, INTERNAL_ERROR
 from AthenaServer.data.rest import COMMANDS as REST_COMMANDS
 from AthenaServer.data.general import CURLY_BRACKET_OPEN, CURLY_BRACKET_CLOSE, UTF_8, SPACE, FORWARD_SLASH
@@ -35,16 +34,9 @@ class HandlerData_AthenaServer(HandlerData):
                     and (pages_key := tuple(pages.split(FORWARD_SLASH))) in self.pages_structure.structure.keys()
             ):
                 try:
-                    return Response_AthenaServer(
-                        code=return_codes.Success.Ok,
-                        body=await (
-                            getattr(self.pages_structure[pages_key], rest_cmd)(
-                                **json.loads(json_args)
-                            )
-                        )
-                    )
+                    return await (getattr(self.pages_structure[pages_key], rest_cmd)(**json.loads(json_args)))
 
-                except json.JSONDecodeError:
+                except json.JSONDecodeError or PermissionError:
                     return BAD_REQUEST
 
                 except TypeError:
@@ -52,6 +44,7 @@ class HandlerData_AthenaServer(HandlerData):
 
                 except AttributeError:
                     return INTERNAL_ERROR
+
 
             case _:
                 return NOT_FOUND

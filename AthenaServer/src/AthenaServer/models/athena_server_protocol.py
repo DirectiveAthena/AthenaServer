@@ -8,11 +8,14 @@ from typing import Callable
 from dataclasses import dataclass, field
 
 # Custom Library
+from AthenaLib.models.time import TimeValue, Minute
 
 # Custom Packages
 from AthenaServer.models.handlers.handler_data import HandlerData
 from AthenaServer.models.outputs.output import Output
 from AthenaServer.models.responses.response import Response
+from AthenaServer.models.responses.response_server import Response_AthenaServer
+from AthenaServer.data.return_codes import ErrorClient
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
@@ -23,6 +26,8 @@ class AthenaServerProtocol(asyncio.Protocol):
     handler_data:HandlerData
 
     # non init
+    tasks:set=field(init=False, default_factory=set)
+    closed:bool=field(init=False, default=False)
     transport: asyncio.transports.Transport = field(init=False, repr=False)
     loop:asyncio.AbstractEventLoop=field(init=False, repr=False)
     outputs:list[Output] = field(init=False, repr=False, default_factory=list)
@@ -54,6 +59,8 @@ class AthenaServerProtocol(asyncio.Protocol):
         """
         self.transport = transport
         self.outputs = [o(transport=transport) for o in self.output_types]
+        task = asyncio.create_task(self.task_ping())
+        self.tasks.add(task)
 
     def data_received(self, data: bytearray) -> None:
         """
@@ -71,9 +78,25 @@ class AthenaServerProtocol(asyncio.Protocol):
         for output in self.outputs:
             await output.send(response)
 
+        if isinstance(response, Response_AthenaServer) and response.code == ErrorClient.RequestTimeout:
+            self.transport.close()
+
     def connection_lost(self, exc: Exception | None) -> None:
         """
         Gets run when a client looses connection to the server
         """
         if exc is not None:
             print(exc)
+        self.transport.close()
+        self.closed = True
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # - Ping Task -
+    # ------------------------------------------------------------------------------------------------------------------
+    # todo don't make this hardcoded
+    async def task_ping(self, interval:TimeValue=Minute(1)):
+        interval_sec = interval.to_int_as_seconds()
+        while not self.closed:
+            await asyncio.sleep(interval_sec)
+            for output in self.outputs:
+                await output.send_ping()

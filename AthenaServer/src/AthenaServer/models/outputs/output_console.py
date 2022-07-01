@@ -20,3 +20,6 @@ class OutputConsole(Output):
 
     async def on_receive(self, data: bytearray):
         print(data)
+
+    async def send_ping(self):
+        print("Ping has been sent")

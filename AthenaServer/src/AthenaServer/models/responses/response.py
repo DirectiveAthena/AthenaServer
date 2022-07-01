@@ -17,7 +17,7 @@ from AthenaServer.data.general import BODY
 # ----------------------------------------------------------------------------------------------------------------------
 @dataclass(slots=True, match_args=True)
 class Response(ABC):
-    body:Any
+    body:Any=None
 
     def to_dict(self):
         return {BODY: self.body}

@@ -11,4 +11,12 @@ from enum import Enum
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-COMMANDS = {"GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "HEAD"}
+COMMANDS = {"GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS","HEAD"}
+class Commands(Enum):
+    GET="GET"
+    PUT="PUT"
+    PATCH="PATCH"
+    POST="POST"
+    DELETE="DELETE"
+    OPTIONS="OPTIONS"
+    HEAD="HEAD"

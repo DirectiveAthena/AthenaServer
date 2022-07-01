@@ -3,7 +3,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import json
 
 # Custom Library
@@ -18,8 +18,8 @@ from AthenaServer.data.general import UTF_8, CODE, BODY
 # ----------------------------------------------------------------------------------------------------------------------
 @dataclass(slots=True, match_args=True)
 class Response_AthenaServer(Response):
-    code: RETURN_CODES_UNION
-    body: dict
+    code: RETURN_CODES_UNION=None
+    body: dict = field(default_factory=dict)
 
     def to_dict(self):
         return {

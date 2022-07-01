@@ -5,6 +5,7 @@
 from __future__ import annotations
 import asyncio
 import unittest
+import tracemalloc
 
 # Custom Library
 
@@ -18,6 +19,7 @@ from AthenaServerClient.models.non_linear.athena_server_client_protocol import A
 class Test_AthenaServerClient_NonLinear(unittest.TestCase):
     def test_general(self):
         async def main():
+            tracemalloc.start()
             client = AthenaServerClient_NonLinear(
                 host="localhost",
                 port=41768
@@ -31,6 +33,11 @@ class Test_AthenaServerClient_NonLinear(unittest.TestCase):
                 bytearray(b'{"code": 200, "body": {"response": "here is some data according to : something "}}\r\n'),
                 await protocol.read_buffer()
             )
+
+            await asyncio.sleep(60)
+            await protocol.read_buffer()
+
+            await asyncio.sleep(10)
 
             await client.close()
 

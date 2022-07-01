@@ -24,6 +24,7 @@ class Information(Enum):
     Continue = 100
     SwitchProtocol = 101
     Processing = 102
+    Ping = 105
 
 class Success(Enum):
     Ok = 200

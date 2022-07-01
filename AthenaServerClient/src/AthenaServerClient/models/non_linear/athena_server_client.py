@@ -11,6 +11,7 @@ import asyncio
 # Custom Packages
 from AthenaServerClient.models.athena_server_client import AthenaServerClient
 from AthenaServerClient.models.non_linear.athena_server_client_protocol import AthenaServerClientProtocol
+from AthenaServerClient.models.non_linear.handlers.handler_data_client import HandlerData_Client
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
@@ -28,7 +29,9 @@ class AthenaServerClient_NonLinear(AthenaServerClient):
 
     async def create_connection(self):
         return await self.loop.create_connection(
-            protocol_factory=AthenaServerClientProtocol.factory(),
+            protocol_factory=AthenaServerClientProtocol.factory(
+                handler_data=HandlerData_Client(root_name="root"),
+            ),
             host=self.host,
             port=self.port,
         )

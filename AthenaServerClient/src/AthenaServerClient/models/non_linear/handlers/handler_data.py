@@ -3,12 +3,21 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from enum import Enum
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+
 # Custom Library
 
 # Custom Packages
+from AthenaServerClient.models.REST_request import RESTRequest
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-COMMANDS = {"GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "HEAD"}
+@dataclass(slots=True, kw_only=True)
+class HandlerData(ABC):
+    root_name:str
+
+    @abstractmethod
+    async def handle(self, data: bytearray) -> RESTRequest:...
+
