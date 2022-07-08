@@ -20,7 +20,9 @@ import Tests.support_code.page_library as PageLib
 ROOT_PAGE = Page(name="server_test")
 CONSTRUCTION = {
     Page(name="test_empty"):{},
-    PageLib.PageTest():{}
+    PageLib.PageTest():{
+        PageLib.PageTestBasic():{}
+    }
 }
 
 # ----------------------------------------------------------------------------------------------------------------------
