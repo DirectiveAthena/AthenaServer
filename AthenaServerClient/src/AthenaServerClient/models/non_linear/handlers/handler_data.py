@@ -3,14 +3,21 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-import json
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 # Custom Library
 
 # Custom Packages
+from AthenaServerClient.models.REST_request import RESTRequest
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-JSON_NOT_FOUND:bytes = json.dumps({"error": "No valid json structure found"}).encode("utf_8")
-WRONG_FORMAT:bytes = json.dumps({"error": "Format of the json structure could not be mapped to a valid format"}).encode("utf_8")
+@dataclass(slots=True, kw_only=True)
+class HandlerData(ABC):
+    root_name:str
+
+    @abstractmethod
+    async def handle(self, data: bytearray) -> RESTRequest:...
+

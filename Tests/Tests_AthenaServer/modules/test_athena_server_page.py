@@ -8,7 +8,7 @@ import unittest
 # Custom Library
 
 # Custom Packages
-from Tests.support import constructor_0, constructor_1
+from Tests.Tests_AthenaServer.support import constructor_0, constructor_1
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
@@ -16,7 +16,7 @@ from Tests.support import constructor_0, constructor_1
 class test_AthenaServerPage(unittest.TestCase):
     def test_structure_0(self):
         self.assertEqual(
-            {
+            { # reason for a set comparison is that a set doesn't hold the index into account
                 ("root",),
                 ("root", "info"),
                 ("root", "data"),
@@ -28,7 +28,7 @@ class test_AthenaServerPage(unittest.TestCase):
         )
     def test_structure_1(self):
         self.assertEqual(
-            {
+            { # reason for a set comparison is that a set doesn't hold the index into account
                 ("root",),
                 ("root", "info"),
                 ("root", "data"),

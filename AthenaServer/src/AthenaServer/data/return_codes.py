@@ -13,7 +13,8 @@ from enum import Enum
 # - All -
 # ----------------------------------------------------------------------------------------------------------------------
 __all__ = [
-    "Information", "Success", "Redirection", "ErrorClient", "ErrorServer"
+    "Information", "Success", "Redirection", "ErrorClient", "ErrorServer",
+    "RETURN_CODES_UNION"
 ]
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -23,6 +24,7 @@ class Information(Enum):
     Continue = 100
     SwitchProtocol = 101
     Processing = 102
+    Ping = 105
 
 class Success(Enum):
     Ok = 200
@@ -79,4 +81,7 @@ class ErrorServer(Enum):
     LoopDetected = 508
     NotExtended = 510
     NetworkAuthenticationRequired = 511
+
+# ----------------------------------------------------------------------------------------------------------------------
+RETURN_CODES_UNION = Information | Success | Redirection | ErrorClient | ErrorServer
 

@@ -3,18 +3,26 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from abc import ABC
-import asyncio
+from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
+from typing import Callable
 
 # Custom Library
 
 # Custom Packages
-from AthenaServer.models.outputs.output import Output
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-class OutputClient(Output, ABC):
-    transport: asyncio.Transport
-    def __init__(self, transport:asyncio.Transport, **_):
-        self.transport = transport
+@dataclass(slots=True, kw_only=True)
+class AthenaServerClient(ABC):
+    host:str
+    port:int
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # - ABC methods -
+    # ------------------------------------------------------------------------------------------------------------------
+    @abstractmethod
+    async def connect(self):...
+    @abstractmethod
+    async def close(self): ...

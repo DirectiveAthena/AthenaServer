@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 # Custom Library
 
 # Custom Packages
+from AthenaServer.models.responses.response import Response
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
@@ -17,9 +18,8 @@ class Output(ABC):
         pass
 
     @abstractmethod
-    def json_not_found(self):
-        pass
-
+    async def send(self, response:Response):...
     @abstractmethod
-    def wrong_format(self):
-        pass
+    async def on_receive(self, data:bytearray):...
+    @abstractmethod
+    async def send_ping(self):...

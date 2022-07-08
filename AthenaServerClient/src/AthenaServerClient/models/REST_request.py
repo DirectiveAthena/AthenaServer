@@ -3,27 +3,22 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
+from dataclasses import dataclass, field
+import json
 
 # Custom Library
-from AthenaServer.models.athena_server import AthenaServer
-from Tests.support import constructor_0
 
 # Custom Packages
-
-# ----------------------------------------------------------------------------------------------------------------------
-# - Support Code -
-# ----------------------------------------------------------------------------------------------------------------------
-def create_test_server() -> AthenaServer:
-    server = AthenaServer(
-        host="localhost",
-        port=41768,
-        pages_structure=constructor_0()
-    )
-    return server
-
+from AthenaServerClient.data.rest import Commands
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-if __name__ == '__main__':
-    create_test_server().start()
+@dataclass(slots=True)
+class RESTRequest:
+    rest_command:Commands
+    orm:str
+    body:dict
+
+    def encode(self) -> bytes:
+        return f"{self.rest_command.value} {self.orm} {json.dumps(self.body)}".encode("UTF_8")

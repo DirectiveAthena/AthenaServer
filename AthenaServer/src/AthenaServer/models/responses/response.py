@@ -3,18 +3,25 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from abc import ABC
-import asyncio
+from dataclasses import dataclass
+from abc import ABC, abstractmethod
+from typing import Any
 
 # Custom Library
+from AthenaServer.data.general import BODY
 
 # Custom Packages
-from AthenaServer.models.outputs.output import Output
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-class OutputClient(Output, ABC):
-    transport: asyncio.Transport
-    def __init__(self, transport:asyncio.Transport, **_):
-        self.transport = transport
+@dataclass(slots=True, match_args=True)
+class Response(ABC):
+    body:Any=None
+
+    def to_dict(self):
+        return {BODY: self.body}
+
+    @abstractmethod
+    def encode(self) -> bytes:
+        pass

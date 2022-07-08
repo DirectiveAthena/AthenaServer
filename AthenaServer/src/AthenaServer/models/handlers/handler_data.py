@@ -3,18 +3,20 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from abc import ABC
-import asyncio
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 # Custom Library
 
 # Custom Packages
-from AthenaServer.models.outputs.output import Output
+from AthenaServer.models.responses.response import Response
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-class OutputClient(Output, ABC):
-    transport: asyncio.Transport
-    def __init__(self, transport:asyncio.Transport, **_):
-        self.transport = transport
+@dataclass(slots=True, kw_only=True)
+class HandlerData(ABC):
+
+    @abstractmethod
+    async def handle(self, data: bytearray) -> Response:...
+

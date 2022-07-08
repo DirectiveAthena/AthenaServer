@@ -3,18 +3,19 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
-from abc import ABC
-import asyncio
 
 # Custom Library
 
 # Custom Packages
-from AthenaServer.models.outputs.output import Output
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-class OutputClient(Output, ABC):
-    transport: asyncio.Transport
-    def __init__(self, transport:asyncio.Transport, **_):
-        self.transport = transport
+CURLY_BRACKET_OPEN:str = "{"
+CURLY_BRACKET_CLOSE:str = "}"
+UTF_8:str = "utf_8"
+SPACE:str = " "
+FORWARD_SLASH:str = "/"
+
+CODE = "code"
+BODY = "body"
