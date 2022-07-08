@@ -28,7 +28,7 @@ def page_constructor(root_page:Page, page_construction:dict) -> Page:
     for page, content in page_construction.items(): #type:Page, dict[Page:dict]
         # Makes sure we don't overwrite any already assigned pages
         if (page_name := page.name.lower()) in root_page.content:
-            raise ValueError(f"Cant have two pages with the same name ('{page_name}')")
+            raise ValueError(f"Cant have two pages with the same name ('{page_name}') in the '{root_page.name}' Page")
         # add recursively constructed pages to the root
         #   Recursion used here for ease of use
         #   And it works s long as the page_construction is defined in the same format each and every iteration
