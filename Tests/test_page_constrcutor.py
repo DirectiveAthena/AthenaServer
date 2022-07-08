@@ -4,41 +4,41 @@
 # General Packages
 from __future__ import annotations
 import asyncio
-import functools
 import json
 from dataclasses import dataclass
 
 # Custom Library
 
 # Custom Packages
+from AthenaServer.functions.pages import page_constructor
 from AthenaServer.models.page import Page
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
-async def get_something(text, *, defined:str):
-    print(text, defined)
-
-@dataclass()
+@dataclass(unsafe_hash=True)
 class PageDifferent(Page):
     name:str="different"
 
-    def GET(self, *args, **kwargs):
+    async def GET(self, *args, **kwargs):
         """this gets something"""
         print("here")
 
 async def main():
-    root_page = Page(name="root").add_pages(
-        Page(name="something").add_pages(
-            PageDifferent(),
-            Page(name="else"),
-        ),
-        Page(name="else")
+    construction = {
+        Page(name="something"): {
+            PageDifferent(): {},
+            Page(name="else"): {}
+        },
+        Page(name="else"): {}
+    }
+
+    root_page = page_constructor(
+        root_page=Page(name="root"),
+        page_construction=construction
     )
 
-    with open("dump.json", "w") as file:
-        file.write(json.dumps(root_page.get_page_structure_and_commands(single=True), indent=4))
+    await root_page.get_page("something/different".split("/")).GET()
 
 if __name__ == '__main__':
     asyncio.run(main())
-    # main()
