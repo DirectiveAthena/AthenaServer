@@ -15,11 +15,6 @@ import functools
 @dataclass(slots=True, kw_only=True)
 class Page():
     name:str
-    POST:functools.partial   = None
-    GET:functools.partial    = None
-    REPLACE:functools.partial= None
-    MODIFY:functools.partial = None
-    DELETE:functools.partial = None
 
     # non init
     _content: dict[str:Page] = field(init=False, default_factory=dict)
@@ -35,6 +30,14 @@ class Page():
     def __getitem__(self, item:str) -> Page:
         return self._content[item]
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # - Methods that assign commands -
+    # ------------------------------------------------------------------------------------------------------------------
+    async def POST(self, *args, **kwargs):...
+    async def GET(self, *args, **kwargs):...
+    async def REPLACE(self, *args, **kwargs):...
+    async def MODIFY(self, *args, **kwargs):...
+    async def DELETE(self, *args, **kwargs):...
     # ------------------------------------------------------------------------------------------------------------------
     # - Methods that affect pages -
     # ------------------------------------------------------------------------------------------------------------------
@@ -66,13 +69,19 @@ class Page():
             mem = mem[page_str]
         return mem
 
-    def get_page_structure(self) -> dict:
+    def get_page_structure_and_commands(self, *, single:bool=False) -> dict:
+        """
+        Returns a dictionary with all populated pages and page commands
+
+        Parameters:
+        - single : Boolean value, if set to True the method will not get the structure of any grand child pages
+        """
         return_dict = {}
         for page_name, page in self._content.items():
             return_dict[page_name] = {
-                "methods": [m for m in ("POST", "GET", "REPLACE", "MODIFY", "DELETE")
-                            if getattr(page, m) is not None],
-                "pages":page.get_page_structure()
+                "methods": {m:doc for m in ("POST", "GET", "REPLACE", "MODIFY", "DELETE")
+                            if (doc := getattr(page, m).__doc__) is not None},
+                "pages": page.get_page_structure_and_commands() if not single else {}
             }
         return return_dict
 
