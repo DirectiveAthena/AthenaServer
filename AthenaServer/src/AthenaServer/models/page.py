@@ -26,11 +26,16 @@ class Page:
     # ------------------------------------------------------------------------------------------------------------------
     # - Methods that assign commands -
     # ------------------------------------------------------------------------------------------------------------------
-    async def POST(self, *args, **kwargs):raise NotImplementedError
-    async def GET(self, *args, **kwargs):raise NotImplementedError
-    async def REPLACE(self, *args, **kwargs):raise NotImplementedError
-    async def MODIFY(self, *args, **kwargs):raise NotImplementedError
-    async def DELETE(self, *args, **kwargs):raise NotImplementedError
+    async def POST(self, *args, **kwargs):
+        raise AttributeError
+    async def GET(self, *args, **kwargs):
+        raise AttributeError
+    async def REPLACE(self, *args, **kwargs):
+        raise AttributeError
+    async def MODIFY(self, *args, **kwargs):
+        raise AttributeError
+    async def DELETE(self, *args, **kwargs):
+        raise AttributeError
 
     # ------------------------------------------------------------------------------------------------------------------
     # - Methods that affect pages -

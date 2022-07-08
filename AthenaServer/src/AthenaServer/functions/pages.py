@@ -49,4 +49,5 @@ def get_page(root_page:Page, page_location:str, *, sep="/") -> Page:
     if not page_location.startswith(root_page_name := root_page.name):
         raise ValueError(f"page_location did not start with the root page name of '{root_page_name}'")
 
-    return root_page.get_page(page_location.replace(root_page_name, text.NOTHING).split(sep))
+    # form the list and remove the root page name
+    return root_page.get_page(page_location.split(sep)[1:])
