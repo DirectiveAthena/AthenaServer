@@ -4,6 +4,7 @@
 # General Packages
 from __future__ import annotations
 import asyncio
+import socket
 import tracemalloc
 
 # Custom Library
@@ -17,13 +18,18 @@ from Tests.support_code.constuction import test_server_constructor
 # ----------------------------------------------------------------------------------------------------------------------
 # noinspection PyTypeChecker
 HOST = "localhost"
-PORT = 41735
+PORT = 41736
 
 def launch_server():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind((HOST, PORT))
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
     server = AthenaServer(
         host=HOST,
-        port=41735,
-        root_page=test_server_constructor()
+        port=PORT,
+        root_page=test_server_constructor(),
+        socket=s
     )
     server.start()
 

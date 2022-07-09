@@ -19,23 +19,32 @@ class Page:
     # non init
     content: dict[str:Page] = field(init=False, default_factory=dict, hash=False)
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # - Init stuff -
+    # ------------------------------------------------------------------------------------------------------------------
     def __post_init__(self):
         if " " in self.name:
             raise ValueError("the page name cannot contain spaces")
 
     # ------------------------------------------------------------------------------------------------------------------
+    # - Special methods -
+    # ------------------------------------------------------------------------------------------------------------------
+    def _repr_small(self) -> str:
+        return f"{type(self).__name__}(name={self.name})"
+
+    # ------------------------------------------------------------------------------------------------------------------
     # - Methods that assign commands -
     # ------------------------------------------------------------------------------------------------------------------
     async def POST(self, *args, **kwargs):
-        raise AttributeError
+        raise AttributeError(f"POST has not been defined on the current {self._repr_small()}")
     async def GET(self, *args, **kwargs):
-        raise AttributeError
+        raise AttributeError(f"GET has not been defined on the current {self._repr_small()}")
     async def REPLACE(self, *args, **kwargs):
-        raise AttributeError
+        raise AttributeError(f"REPLACE has not been defined on the current {self._repr_small()}")
     async def MODIFY(self, *args, **kwargs):
-        raise AttributeError
+        raise AttributeError(f"MODIFY has not been defined on the current {self._repr_small()}")
     async def DELETE(self, *args, **kwargs):
-        raise AttributeError
+        raise AttributeError(f"DELETE has not been defined on the current {self._repr_small()}")
 
     # ------------------------------------------------------------------------------------------------------------------
     # - Methods that affect pages -

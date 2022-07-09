@@ -7,6 +7,8 @@ import asyncio
 from dataclasses import dataclass, field
 import ssl
 import tracemalloc
+import socket
+from typing import Iterable
 
 # Custom Library
 
@@ -22,6 +24,7 @@ class AthenaServer:
     host:str
     port:int
     root_page:Page
+    socket:socket.socket=None
 
     # non init
     server:asyncio.AbstractServer = field(init=False, default=None, repr=False)
@@ -44,6 +47,7 @@ class AthenaServer:
             protocol_factory=AthenaServerProtocol.factory(
                 root_page=self.root_page
             ),
-            host=self.host,
-            port=self.port,
+            host=self.host if self.socket is None else None,
+            port=self.port if self.socket is None else None,
+            sock=self.socket
         )

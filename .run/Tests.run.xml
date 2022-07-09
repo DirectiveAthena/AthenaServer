@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="AthenaServer and -Client tests" type="tests" factoryName="Autodetect">
+  <configuration default="false" name="Tests" type="tests" factoryName="Autodetect">
     <module name="AthenaServer" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
