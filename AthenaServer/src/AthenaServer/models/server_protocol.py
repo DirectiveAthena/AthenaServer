@@ -5,27 +5,34 @@
 from __future__ import annotations
 import asyncio
 from typing import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, InitVar
 
 # Custom Library
 
 # Custom Packages
 from AthenaServer.models.page import Page
-from AthenaServer.functions.pages import get_page
+from AthenaServer.models.data_handler import DataHandler
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
 @dataclass(eq=False, order=False, match_args=False, slots=True, kw_only=True)
 class AthenaServerProtocol(asyncio.Protocol):
-    root_page:Page
+    root_page:InitVar[Page]
+    handler:type[DataHandler]=DataHandler
+
     # non init
     closed:bool=field(init=False, default=False)
     transport: asyncio.transports.Transport = field(init=False, repr=False)
     loop:asyncio.AbstractEventLoop=field(init=False, repr=False)
+    data_handler:DataHandler=field(init=False,repr=False)
 
-    def __post_init__(self):
+    def __post_init__(self, root_page: Page):
         self.loop = asyncio.new_event_loop()
+        self.data_handler=DataHandler(
+            root_page=root_page
+        )
+
 
     # ------------------------------------------------------------------------------------------------------------------
     # - factory, needed for asyncio.AbstractEventLoop.create_connection protocol_factory kwarg used in Launcher -
@@ -54,19 +61,13 @@ class AthenaServerProtocol(asyncio.Protocol):
     def data_received(self, data: bytearray) -> None:
         """
         Gets run when a client sends data to server
+        This immediately gets handed of to an async coroutine
         """
-        asyncio.create_task(self._data_received(data))
+        asyncio.ensure_future(self._data_received(data))
 
-    async def _data_received(self, data:bytearray):
-        cmd, location, args = data.decode("utf8").split(" ")
-        page = get_page(
-            root_page=self.root_page,
-            page_location=location
-        )
-        self.transport.write(
-            f"{await getattr(page, cmd)()}\r\n".encode("utf_8")
-        )
-
+    async def _data_received(self, data: bytearray) -> None:
+        output = await self.data_handler.handle(data)
+        self.transport.write(output)
 
     def connection_lost(self, exc: Exception | None) -> None:
         """

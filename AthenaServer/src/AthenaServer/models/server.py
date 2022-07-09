@@ -5,10 +5,9 @@
 from __future__ import annotations
 import asyncio
 from dataclasses import dataclass, field
-import ssl
 import tracemalloc
 import socket
-from typing import Iterable
+import subprocess
 
 # Custom Library
 
@@ -45,9 +44,10 @@ class AthenaServer:
     async def create_server(self) -> asyncio.base_events.Server:
         return await self.loop.create_server(
             protocol_factory=AthenaServerProtocol.factory(
-                root_page=self.root_page
+                root_page=self.root_page,
             ),
             host=self.host if self.socket is None else None,
             port=self.port if self.socket is None else None,
             sock=self.socket
         )
+
