@@ -70,20 +70,31 @@ class Page:
             mem = mem.content[page_str]
         return mem
 
-    def get_page_structure_and_commands(self, *, single:bool=False) -> dict:
+    def get_page_structure_and_commands(self) -> dict:
         """
         Returns a dictionary with all populated pages and page commands
-
-        Parameters:
-        - single : Boolean value, if set to True the method will not get the structure of any grand child pages
         """
         return_dict = {}
         for page_name, page in self.content.items():
             return_dict[page_name] = {
                 "methods": {m:doc for m in ("POST", "GET", "REPLACE", "MODIFY", "DELETE")
                             if (doc := getattr(page, m).__doc__) is not None},
-                "pages": page.get_page_structure_and_commands() if not single else {}
+                "pages": page.get_page_structure_and_commands()
             }
         return return_dict
+
+    def get_page_structure_and_commands_of_itself(self):
+        """
+        Returns a dictionary with all populated pages and page commands, without the structure of any grand child pages
+        """
+        return_dict = {}
+        for page_name, page in self.content.items():
+            return_dict[page_name] = {
+                "methods": {m:doc for m in ("POST", "GET", "REPLACE", "MODIFY", "DELETE")
+                            if (doc := getattr(page, m).__doc__) is not None},
+                "pages": {}
+            }
+        return return_dict
+
 
 
