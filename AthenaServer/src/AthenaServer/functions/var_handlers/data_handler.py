@@ -5,35 +5,37 @@
 from __future__ import annotations
 
 # Custom Library
-import copy
-
-from AthenaServer.functions.pages import page_constructor
-from AthenaServer.models.page import Page
 
 # Custom Packages
-
-import Tests.support_code.page_library as PageLib
-
-# ----------------------------------------------------------------------------------------------------------------------
-# - Construction -
-# ----------------------------------------------------------------------------------------------------------------------
-ROOT_PAGE = Page(name="server_test")
-CONSTRUCTION = {
-    Page(name="test_empty"):{},
-    PageLib.PageTest():{
-        PageLib.PageTestBasic():{},
-        PageLib.PageTestDatabase():{}
-    }
-}
+from AthenaServer.models.data_handler import DataHandler
+from AthenaServer.models.page import Page
 
 # ----------------------------------------------------------------------------------------------------------------------
-# - Constructor -
+# - Support Code -
 # ----------------------------------------------------------------------------------------------------------------------
-def test_server_constructor(root_page=ROOT_PAGE,page_construction=None) -> Page:
-    if page_construction is None:
-        page_construction = CONSTRUCTION
+# noinspection PyTypeChecker
+DATA_HANDLER:DataHandler=None
 
-    return page_constructor(
-        root_page=copy.deepcopy(root_page),
-        page_construction=copy.deepcopy(page_construction)
-    )
+# ----------------------------------------------------------------------------------------------------------------------
+# - Code -
+# ----------------------------------------------------------------------------------------------------------------------
+def set_data_handler(root_page:Page) -> None:
+    """
+    Creates a new DataHandler object if it doesn't exist yet in the global space.
+
+    Parameters:
+    - root_page: The Page that defines the root of the server.
+        Has all it's contents defined with the correct child Pages
+    """
+    global DATA_HANDLER
+    if DATA_HANDLER is None:
+        DATA_HANDLER = DataHandler(
+            root_page=root_page
+        )
+
+def get_data_handler() -> DataHandler:
+    """
+    Retrieve the DataHandler from the global space
+    """
+    global DATA_HANDLER
+    return DATA_HANDLER

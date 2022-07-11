@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 # Custom Library
 
 # Custom Packages
+from AthenaServer.models.context import Context
 
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
@@ -35,15 +36,15 @@ class Page:
     # ------------------------------------------------------------------------------------------------------------------
     # - Methods that assign commands -
     # ------------------------------------------------------------------------------------------------------------------
-    async def POST(self, *args, **kwargs):
+    async def POST(self, context: Context, **kwargs):
         raise AttributeError(f"POST has not been defined on the current {self._repr_small()}")
-    async def GET(self, *args, **kwargs):
+    async def GET(self, context: Context, **kwargs):
         raise AttributeError(f"GET has not been defined on the current {self._repr_small()}")
-    async def REPLACE(self, *args, **kwargs):
+    async def REPLACE(self, context: Context, **kwargs):
         raise AttributeError(f"REPLACE has not been defined on the current {self._repr_small()}")
-    async def MODIFY(self, *args, **kwargs):
+    async def MODIFY(self, context: Context, **kwargs):
         raise AttributeError(f"MODIFY has not been defined on the current {self._repr_small()}")
-    async def DELETE(self, *args, **kwargs):
+    async def DELETE(self, context: Context, **kwargs):
         raise AttributeError(f"DELETE has not been defined on the current {self._repr_small()}")
 
     # ------------------------------------------------------------------------------------------------------------------

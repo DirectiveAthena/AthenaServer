@@ -5,35 +5,34 @@
 from __future__ import annotations
 
 # Custom Library
-import copy
-
-from AthenaServer.functions.pages import page_constructor
-from AthenaServer.models.page import Page
 
 # Custom Packages
-
-import Tests.support_code.page_library as PageLib
-
-# ----------------------------------------------------------------------------------------------------------------------
-# - Construction -
-# ----------------------------------------------------------------------------------------------------------------------
-ROOT_PAGE = Page(name="server_test")
-CONSTRUCTION = {
-    Page(name="test_empty"):{},
-    PageLib.PageTest():{
-        PageLib.PageTestBasic():{},
-        PageLib.PageTestDatabase():{}
-    }
-}
+from AthenaServer.models.databases.database import Database
 
 # ----------------------------------------------------------------------------------------------------------------------
-# - Constructor -
+# - Support Code -
 # ----------------------------------------------------------------------------------------------------------------------
-def test_server_constructor(root_page=ROOT_PAGE,page_construction=None) -> Page:
-    if page_construction is None:
-        page_construction = CONSTRUCTION
+# noinspection PyTypeChecker
+DATABASE:Database=None
 
-    return page_constructor(
-        root_page=copy.deepcopy(root_page),
-        page_construction=copy.deepcopy(page_construction)
-    )
+# ----------------------------------------------------------------------------------------------------------------------
+# - Code -
+# ----------------------------------------------------------------------------------------------------------------------
+def set_database(database_type:type[Database]) -> None:
+    """
+    Creates a new DataHandler object if it doesn't exist yet in the global space.
+
+    Parameters:
+    - root_page: The Page that defines the root of the server.
+        Has all it's contents defined with the correct child Pages
+    """
+    global DATABASE
+    if DATABASE is None:
+        DATABASE = database_type()
+
+def get_database() -> Database:
+    """
+    Retrieve the DataHandler from the global space
+    """
+    global DATABASE
+    return DATABASE

@@ -5,7 +5,7 @@
 from __future__ import annotations
 import asyncio
 import socket
-import tracemalloc
+import os
 
 # Custom Library
 from AthenaServer.models.server import AthenaServer
@@ -20,7 +20,7 @@ from Tests.support_code.constuction import test_server_constructor
 HOST = "localhost"
 PORT = 41736
 
-def launch_server():
+async def launch_server():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((HOST, PORT))
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -29,15 +29,29 @@ def launch_server():
         host=HOST,
         port=PORT,
         root_page=test_server_constructor(),
-        socket=s
+        socket=s,
+        # database connection stuff
+        db_host="localhost",
+        db_port=3306,
+        db_user=os.getenv("DB_USER"),
+        db_pass=os.getenv("DB_PASS"),
     )
-    server.start()
+    await server.start()
 
-async def _launch_server():
-    tracemalloc.start()
 
 async def connect_to_server() -> tuple[asyncio.StreamReader, asyncio.StreamWriter]:
-    return await asyncio.open_connection(host=HOST, port=PORT)
+    loop = asyncio.events.get_running_loop()
+    reader = asyncio.StreamReader(limit=2 ** 16 , loop=loop)
+    protocol = asyncio.StreamReaderProtocol(reader, loop=loop)
+    transport, _ = await loop.create_connection(lambda: protocol, HOST, PORT)
+    writer = asyncio.StreamWriter(transport, protocol, reader, loop)
+    return reader, writer
+
+    # return await asyncio.open_connection(
+    #     host=HOST,
+    #     port=PORT,
+    #     loop=asyncio.get_running_loop()
+    # )
 
 if __name__ == '__main__':
-    launch_server()
+    asyncio.run(launch_server())
