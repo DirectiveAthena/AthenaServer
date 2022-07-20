@@ -23,12 +23,7 @@ class DataHandler:
 
     async def handle(self, data:bytearray) -> Context:
         # TODO replace with something better !
-        api_key, cmd, location, json_kwargs = data.decode("utf8").split(" ",3)
-
-        # test the api_key:
-        if api_key != "_":
-            # todo lookup the apikey and validate
-            pass
+        cmd, location, json_kwargs = data.decode("utf8").split(" ",2)
 
         # test the base cmd
         if cmd not in COMMANDS:

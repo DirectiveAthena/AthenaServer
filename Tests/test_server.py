@@ -17,7 +17,7 @@ from Tests.support_code.server import connect_to_server
 class TestServer(unittest.IsolatedAsyncioTestCase):
     async def test_Connect(self):
         reader, writer = await connect_to_server()
-        writer.write(b"_ GET server_test/test/database {}")
+        writer.write(b"GET server_test/test/database {}")
         # writer.write(b"_ GET server_test/test/basic {}")
         # writer.write(b"GET server_test/user/directiveathena {}")
         # writer.write(b"GET server_test/user/api_key {'levels':1}")
