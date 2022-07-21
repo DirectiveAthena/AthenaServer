@@ -3,6 +3,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # General Packages
 from __future__ import annotations
+import abc
 
 # Custom Library
 
@@ -11,3 +12,12 @@ from __future__ import annotations
 # ----------------------------------------------------------------------------------------------------------------------
 # - Code -
 # ----------------------------------------------------------------------------------------------------------------------
+class Database(abc.ABC):
+    @abc.abstractmethod
+    async def connect(self, host:str, port:int, username:str, password:str):...
+
+    @abc.abstractmethod
+    async def get_cursor(self):...
+
+    @abc.abstractmethod
+    async def close(self):...
